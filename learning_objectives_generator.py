@@ -1,4 +1,4 @@
-THIS SHOULD BE A LINTER ERROR#!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Learning Objectives Generator
 A program that helps instructional designers write clear and concise learning objectives
@@ -186,10 +186,11 @@ class LearningObjectivesGenerator:
                     obj = f"Describe the rationale for {cleaned_goal}"
                 elif "design" in cleaned_goal and "interface" in cleaned_goal:
                     obj = f"Explain user experience design principles"
-                elif "marketing plan" in cleaned_goal:
+                elif "marketing" in cleaned_goal:
                     obj = f"Explain marketing principles and strategies"
                 else:
-                    obj = f"Describe the concepts involved in {cleaned_goal}"
+                    key_concepts = self._extract_key_concepts(cleaned_goal)
+                    obj = f"Explain the principles of {key_concepts}"
             
             elif level == 3:  # Apply
                 if "design" in cleaned_goal and "interface" in cleaned_goal:
