@@ -1,0 +1,2 @@
+# No external dependencies required - uses only Python standard library
+# The program runs on Python 3.6+
