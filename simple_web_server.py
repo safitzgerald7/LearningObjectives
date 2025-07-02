@@ -302,7 +302,6 @@ class LearningObjectivesHandler(http.server.SimpleHTTPRequestHandler):
     """Custom HTTP request handler for the learning objectives generator"""
     
     def __init__(self, *args, **kwargs):
-        self.generator = LearningObjectivesGenerator()
         super().__init__(*args, **kwargs)
     
     def do_GET(self):
@@ -343,7 +342,8 @@ class LearningObjectivesHandler(http.server.SimpleHTTPRequestHandler):
                     return
                 
                 # Generate objectives
-                result = self.generator.generate_learning_objectives(goal)
+                generator = LearningObjectivesGenerator()
+                result = generator.generate_learning_objectives(goal)
                 
                 # Send successful response
                 self.send_response(200)

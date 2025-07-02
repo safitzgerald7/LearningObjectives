@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+THIS SHOULD BE A LINTER ERROR#!/usr/bin/env python3
 """
 Learning Objectives Generator
 A program that helps instructional designers write clear and concise learning objectives
