@@ -21,7 +21,33 @@ The program recognizes and generates objectives for all six levels of Bloom's Ta
 5. **Evaluate** - Justify a stand or decision (evaluate, critique, assess)
 6. **Create** - Produce new or original work (create, design, develop)
 
+## Quick Start
+
+The easiest way to get started is with the startup script:
+
+```bash
+python3 start.py
+```
+
+This will present you with a menu of options to choose from.
+
 ## Usage
+
+### Web Interface (Recommended)
+
+The easiest way to use the Learning Objectives Generator is through the web interface:
+
+```bash
+python3 simple_web_server.py
+```
+
+Then open your browser and go to `http://localhost:8080`
+
+The web interface provides:
+- Easy-to-use form for entering course goals
+- Example goals you can click to try
+- Beautiful formatted results
+- No additional dependencies required (uses Python standard library only)
 
 ### Command Line Mode
 
@@ -41,13 +67,26 @@ python3 learning_objectives_generator.py "the goal is for learners to know the s
        1.1.1. Explain the purpose of each supply item. (understand)
 ```
 
-### Interactive Mode
+### Interactive Command Line Mode
 
 ```bash
 python3 learning_objectives_generator.py -i
 ```
 
 This will start an interactive session where you can enter multiple course goals and get immediate feedback.
+
+### Advanced Web Interface (Flask-based)
+
+If you have Flask installed, you can also use the more advanced web interface:
+
+```bash
+python3 app.py
+```
+
+This requires installing Flask:
+```bash
+pip install Flask==2.3.3
+```
 
 ## Requirements
 

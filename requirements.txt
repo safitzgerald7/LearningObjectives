@@ -1,2 +1,7 @@
+# Requirements for the Learning Objectives Generator
+
+# For the command-line version and simple web interface:
 # No external dependencies required - uses only Python standard library
-# The program runs on Python 3.6+
+
+# For the advanced Flask-based web interface (optional):
+Flask==2.3.3
