@@ -58,7 +58,7 @@ class LearningObjectivesGenerator:
     def identify_bloom_level(self, goal_text: str) -> int:
         """Identify the highest Bloom's level indicated by the goal text"""
         goal_lower = goal_text.lower()
-        highest_level = 1  # Default to remember level
+        highest_level = 2  # Default to understand level for better learning progression
         
         # Look for action verbs in the goal text
         for level, bloom_level in self.blooms_levels.items():
@@ -81,6 +81,10 @@ class LearningObjectivesGenerator:
         # Special case: "know" with procedures or supplies suggests application level
         if "know" in goal_lower and any(word in goal_lower for word in ["procedure", "supplies", "equipment", "tools"]):
             highest_level = max(highest_level, 3)
+        
+        # If it's a very simple goal, ensure we have at least understand level
+        if len(goal_lower.split()) <= 3 and highest_level == 1:
+            highest_level = 2
         
         return highest_level
     
@@ -168,10 +172,12 @@ class LearningObjectivesGenerator:
                     obj = f"Identify the steps in {cleaned_goal}"
                 elif "design" in cleaned_goal and "interface" in cleaned_goal:
                     obj = f"Recall the principles of user interface design"
-                elif "marketing plan" in cleaned_goal:
-                    obj = f"Identify the components of a marketing plan"
+                elif "marketing" in cleaned_goal:
+                    obj = f"Identify the components of marketing strategy"
                 else:
-                    obj = f"Identify key concepts related to {cleaned_goal}"
+                    # Extract key noun phrases for better objectives
+                    key_concepts = self._extract_key_concepts(cleaned_goal)
+                    obj = f"Recall key concepts of {key_concepts}"
             
             elif level == 2:  # Understand
                 if "supplies" in cleaned_goal:
@@ -218,6 +224,26 @@ class LearningObjectivesGenerator:
             objectives.append(obj)
         
         return objectives
+    
+    def _extract_key_concepts(self, cleaned_goal: str) -> str:
+        """Extract key concepts from a cleaned goal for better objective generation"""
+        # Remove action verbs that might be duplicated
+        words = cleaned_goal.split()
+        action_verbs = ["create", "design", "develop", "make", "build", "construct", "formulate"]
+        
+        # Remove action verbs from the beginning
+        while words and words[0].lower() in action_verbs:
+            words = words[1:]
+        
+        # Remove articles and common words
+        filtered_words = []
+        skip_words = ["a", "an", "the", "for", "to", "of", "in", "on", "at", "by", "with"]
+        
+        for word in words:
+            if word.lower() not in skip_words:
+                filtered_words.append(word)
+        
+        return " ".join(filtered_words) if filtered_words else cleaned_goal
     
     def generate_learning_objectives(self, goal: str) -> Dict[str, any]:
         """Generate a complete set of learning objectives from a course goal"""
