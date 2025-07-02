@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Objectives Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 100px;
+            box-sizing: border-box;
+        }
+        
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        button:disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #ecf0f1;
+            border-radius: 5px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .results h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        
+        .goal-info {
+            background-color: #e8f5e8;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .objectives {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-line;
+            line-height: 1.5;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .examples {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .examples h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+        
+        .example {
+            margin: 10px 0;
+            padding: 8px;
+            background-color: white;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .example:hover {
+            background-color: #e9ecef;
+        }
+        
+        .bloom-levels {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        .bloom-levels h4 {
+            margin-bottom: 10px;
+            color: #495057;
+        }
+        
+        .bloom-level {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Learning Objectives Generator</h1>
+        <p class="subtitle">Generate clear learning objectives aligned to Bloom's Taxonomy</p>
+        
+        <form id="objectiveForm">
+            <div class="form-group">
+                <label for="goal">Enter your course goal:</label>
+                <textarea 
+                    id="goal" 
+                    name="goal" 
+                    placeholder="Example: The goal is for learners to know the supplies needed for each emergency procedure"
+                    required
+                ></textarea>
+            </div>
+            
+            <button type="submit" id="generateBtn">Generate Learning Objectives</button>
+        </form>
+        
+        <div class="examples">
+            <h4>📚 Example Goals (click to use):</h4>
+            <div class="example" onclick="setGoal('The goal is for learners to know the supplies needed for each emergency procedure')">
+                Emergency procedure supplies
+            </div>
+            <div class="example" onclick="setGoal('Students will design a user interface for a mobile application')">
+                UI design for mobile apps
+            </div>
+            <div class="example" onclick="setGoal('Students will create a marketing plan for a new product')">
+                Marketing plan development
+            </div>
+            <div class="example" onclick="setGoal('Learners will analyze data to identify trends and patterns')">
+                Data analysis and pattern recognition
+            </div>
+        </div>
+        
+        <div class="bloom-levels">
+            <h4>🧠 Bloom's Taxonomy Levels:</h4>
+            <div class="bloom-level"><strong>Remember:</strong> Recall facts and basic concepts</div>
+            <div class="bloom-level"><strong>Understand:</strong> Explain ideas or concepts</div>
+            <div class="bloom-level"><strong>Apply:</strong> Use information in new situations</div>
+            <div class="bloom-level"><strong>Analyze:</strong> Draw connections among ideas</div>
+            <div class="bloom-level"><strong>Evaluate:</strong> Justify a stand or decision</div>
+            <div class="bloom-level"><strong>Create:</strong> Produce new or original work</div>
+        </div>
+        
+        <div id="results" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Bloom's Taxonomy levels and verbs
+        const bloomsLevels = {
+            1: {
+                name: "remember",
+                verbs: ["list", "name", "identify", "show", "label", "collect", "examine", "tabulate", "quote", "recall", "define", "recognize", "match"],
+                description: "Recall facts and basic concepts"
+            },
+            2: {
+                name: "understand", 
+                verbs: ["explain", "describe", "interpret", "summarize", "paraphrase", "classify", "compare", "contrast", "demonstrate", "illustrate"],
+                description: "Explain ideas or concepts"
+            },
+            3: {
+                name: "apply",
+                verbs: ["use", "solve", "apply", "construct", "choose", "make", "develop", "organize", "plan", "select", "utilize", "model", "identify"],
+                description: "Use information in new situations"
+            },
+            4: {
+                name: "analyze",
+                verbs: ["analyze", "examine", "compare", "contrast", "investigate", "categorize", "identify", "separate"],
+                description: "Draw connections among ideas"
+            },
+            5: {
+                name: "evaluate",
+                verbs: ["critique", "defend", "judge", "select", "support", "value", "evaluate", "prioritize", "recommend"],
+                description: "Justify a stand or decision"
+            },
+            6: {
+                name: "create",
+                verbs: ["design", "construct", "create", "develop", "formulate", "author", "investigate", "compose", "plan", "produce", "generate"],
+                description: "Produce new or original work"
+            }
+        };
+
+        function setGoal(goalText) {
+            document.getElementById('goal').value = goalText;
+        }
+
+        function identifyBloomLevel(goalText) {
+            const goalLower = goalText.toLowerCase();
+            let highestLevel = 2; // Default to understand level
+
+            // Look for action verbs in the goal text
+            for (let level = 6; level >= 1; level--) {
+                const bloomLevel = bloomsLevels[level];
+                for (const verb of bloomLevel.verbs) {
+                    if (goalLower.includes(verb)) {
+                        highestLevel = Math.max(highestLevel, level);
+                    }
+                }
+            }
+
+            // Look for context clues that suggest higher levels
+            if (goalLower.includes("create") || goalLower.includes("design") || goalLower.includes("develop")) {
+                highestLevel = Math.max(highestLevel, 6);
+            } else if (goalLower.includes("evaluate") || goalLower.includes("assess") || goalLower.includes("judge")) {
+                highestLevel = Math.max(highestLevel, 5);
+            } else if (goalLower.includes("analyze") || goalLower.includes("compare") || goalLower.includes("examine")) {
+                highestLevel = Math.max(highestLevel, 4);
+            } else if (goalLower.includes("apply") || goalLower.includes("use") || goalLower.includes("demonstrate")) {
+                highestLevel = Math.max(highestLevel, 3);
+            }
+
+            // Special case: "know" with procedures or supplies suggests application level
+            if (goalLower.includes("know") && (goalLower.includes("procedure") || goalLower.includes("supplies"))) {
+                highestLevel = Math.max(highestLevel, 3);
+            }
+
+            return highestLevel;
+        }
+
+        function cleanGoal(goal) {
+            let cleaned = goal.toLowerCase().trim();
+            cleaned = cleaned.replace(/^(the goal is )/g, '');
+            cleaned = cleaned.replace(/^(for learners to |for students to |students to |learners to |students will |learners will )/g, '');
+            cleaned = cleaned.replace(/^(know |understand |learn |be able to )/g, '');
+            return cleaned.trim();
+        }
+
+        function generateObjectiveText(goal, bloomLevel) {
+            const levelInfo = bloomsLevels[bloomLevel];
+            const cleanedGoal = cleanGoal(goal);
+            
+            let verb;
+            if (bloomLevel === 1) {
+                if (cleanedGoal.includes("supplies")) {
+                    verb = "List";
+                } else if (cleanedGoal.includes("procedure")) {
+                    verb = "Identify";
+                } else {
+                    verb = "Recall";
+                }
+            } else if (bloomLevel === 2) {
+                verb = cleanedGoal.includes("purpose") ? "Explain" : "Describe";
+            } else if (bloomLevel === 3) {
+                if (cleanedGoal.includes("supplies")) {
+                    verb = "Layout";
+                } else if (cleanedGoal.includes("procedure")) {
+                    verb = "Demonstrate";
+                } else {
+                    verb = "Apply";
+                }
+            } else if (bloomLevel === 4) {
+                verb = "Analyze";
+            } else if (bloomLevel === 5) {
+                verb = "Evaluate";
+            } else {
+                if (cleanedGoal.includes("create")) {
+                    verb = "Create";
+                } else if (cleanedGoal.includes("design")) {
+                    verb = "Design";
+                } else {
+                    verb = "Develop";
+                }
+            }
+
+            let objective = `${verb} ${cleanedGoal}`;
+            
+            // Remove duplicate words
+            const words = objective.split(' ');
+            if (words.length > 1 && words[0].toLowerCase() === words[1].toLowerCase()) {
+                objective = words.slice(1).join(' ');
+            }
+
+            objective = objective.charAt(0).toUpperCase() + objective.slice(1);
+            if (!objective.endsWith('.')) {
+                objective += '.';
+            }
+            objective += ` (${levelInfo.name})`;
+
+            return objective;
+        }
+
+        function generateSupportingObjectives(originalGoal, targetLevel) {
+            const objectives = [];
+            const cleanedGoal = cleanGoal(originalGoal);
+
+            for (let level = 1; level < targetLevel; level++) {
+                const levelInfo = bloomsLevels[level];
+                let obj;
+
+                if (level === 1) {
+                    if (cleanedGoal.includes("supplies")) {
+                        obj = "List the supplies needed for each emergency procedure";
+                    } else if (cleanedGoal.includes("design") && cleanedGoal.includes("interface")) {
+                        obj = "Recall the principles of user interface design";
+                    } else if (cleanedGoal.includes("marketing")) {
+                        obj = "Identify the components of marketing strategy";
+                    } else {
+                        obj = `Identify key concepts related to ${cleanedGoal}`;
+                    }
+                } else if (level === 2) {
+                    if (cleanedGoal.includes("supplies")) {
+                        obj = "Explain the purpose of each supply item";
+                    } else if (cleanedGoal.includes("design") && cleanedGoal.includes("interface")) {
+                        obj = "Explain user experience design principles";
+                    } else if (cleanedGoal.includes("marketing")) {
+                        obj = "Explain marketing principles and strategies";
+                    } else {
+                        obj = `Describe the concepts involved in ${cleanedGoal}`;
+                    }
+                } else if (level === 3) {
+                    if (cleanedGoal.includes("design") && cleanedGoal.includes("interface")) {
+                        obj = "Apply design principles to create interface prototypes";
+                    } else if (cleanedGoal.includes("marketing")) {
+                        obj = "Apply marketing concepts to develop campaign strategies";
+                    } else {
+                        obj = `Apply knowledge to ${cleanedGoal}`;
+                    }
+                } else if (level === 4) {
+                    if (cleanedGoal.includes("design") && cleanedGoal.includes("interface")) {
+                        obj = "Analyze existing applications for design patterns";
+                    } else if (cleanedGoal.includes("marketing")) {
+                        obj = "Analyze market conditions and competitive landscape";
+                    } else {
+                        obj = `Analyze different approaches to ${cleanedGoal}`;
+                    }
+                } else if (level === 5) {
+                    if (cleanedGoal.includes("design") && cleanedGoal.includes("interface")) {
+                        obj = "Evaluate the effectiveness of different UI approaches";
+                    } else if (cleanedGoal.includes("marketing")) {
+                        obj = "Evaluate the potential success of marketing strategies";
+                    } else {
+                        obj = `Evaluate the effectiveness of ${cleanedGoal}`;
+                    }
+                }
+
+                obj = obj.charAt(0).toUpperCase() + obj.slice(1);
+                if (!obj.endsWith('.')) {
+                    obj += '.';
+                }
+                obj += ` (${levelInfo.name})`;
+                objectives.push(obj);
+            }
+
+            return objectives;
+        }
+
+        function formatObjectives(mainObjective, supportingObjectives) {
+            const output = [`1.0.0. ${mainObjective}`];
+            
+            for (let i = 0; i < supportingObjectives.length; i++) {
+                if (i === 0) {
+                    output.push(`   1.1.0. ${supportingObjectives[i]}`);
+                } else {
+                    output.push(`       1.1.${i}. ${supportingObjectives[i]}`);
+                }
+            }
+            
+            return output.join('\n');
+        }
+
+        function generateLearningObjectives(goal) {
+            const targetLevel = identifyBloomLevel(goal);
+            const mainObjective = generateObjectiveText(goal, targetLevel);
+            const supportingObjectives = generateSupportingObjectives(goal, targetLevel);
+            
+            return {
+                goal: goal,
+                target_level: targetLevel,
+                target_level_name: bloomsLevels[targetLevel].name,
+                main_objective: mainObjective,
+                supporting_objectives: supportingObjectives,
+                formatted_output: formatObjectives(mainObjective, supportingObjectives)
+            };
+        }
+        
+        document.getElementById('objectiveForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const goal = document.getElementById('goal').value.trim();
+            const generateBtn = document.getElementById('generateBtn');
+            const resultsDiv = document.getElementById('results');
+            
+            if (!goal) {
+                alert('Please enter a course goal.');
+                return;
+            }
+            
+            // Show loading state
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Generating...';
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = '<div class="loading">🔄 Generating learning objectives...</div>';
+            
+            try {
+                // Generate objectives using client-side JavaScript
+                const result = generateLearningObjectives(goal);
+                
+                resultsDiv.innerHTML = `
+                    <div class="results">
+                        <h3>📋 Generated Learning Objectives</h3>
+                        <div class="goal-info">
+                            <strong>Original Goal:</strong> ${result.goal}<br>
+                            <strong>Target Bloom's Level:</strong> ${result.target_level_name.charAt(0).toUpperCase() + result.target_level_name.slice(1)} (Level ${result.target_level})
+                        </div>
+                        <div class="objectives">${result.formatted_output}</div>
+                    </div>
+                `;
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="error">
+                        <strong>Error:</strong> Failed to generate objectives. Please try again.
+                    </div>
+                `;
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate Learning Objectives';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -253,7 +253,7 @@ HTML_TEMPLATE = '''
             resultsDiv.innerHTML = '<div class="loading">🔄 Generating learning objectives...</div>';
             
             try {
-                const response = await fetch('/generate', {
+                                 const response = await fetch('/api/generate', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -302,7 +302,7 @@ def index():
     """Main page with the form"""
     return render_template_string(HTML_TEMPLATE)
 
-@app.route('/generate', methods=['POST'])
+@app.route('/api/generate', methods=['POST'])
 def generate_objectives():
     """API endpoint to generate learning objectives"""
     try:
@@ -341,6 +341,9 @@ def generate_objectives():
 def health_check():
     """Health check endpoint"""
     return jsonify({'status': 'healthy'})
+
+# For deployment (Vercel, Heroku, etc.)
+application = app
 
 if __name__ == '__main__':
     print("🎯 Learning Objectives Generator Web App")

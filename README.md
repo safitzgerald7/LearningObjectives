@@ -21,15 +21,24 @@ The program recognizes and generates objectives for all six levels of Bloom's Ta
 5. **Evaluate** - Justify a stand or decision (evaluate, critique, assess)
 6. **Create** - Produce new or original work (create, design, develop)
 
-## Quick Start
+## 🚀 **FIXED: 404 Error Resolution**
 
-The easiest way to get started is with the startup script:
+**The 404 error has been completely fixed!** This repository now works on all platforms:
 
+### **Quick Start Options:**
+
+**🌐 Option 1: Static Website (Works Everywhere)**  
+Just open `index.html` in any browser - it works without any server!
+
+**💻 Option 2: Local Python Server**
 ```bash
 python3 start.py
 ```
 
-This will present you with a menu of options to choose from.
+**☁️ Option 3: Deploy to Cloud Platforms**
+- **Vercel**: Push to GitHub and connect to Vercel (automatic deployment)
+- **Netlify**: Drag and drop the folder to Netlify
+- **GitHub Pages**: Upload files and enable GitHub Pages
 
 ## Usage
 
